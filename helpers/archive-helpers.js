@@ -67,13 +67,9 @@ exports.isUrlArchived = function(url, callback) {
 
 exports.downloadUrls = function(urls) {
   urls.forEach(url => {
-    // get the content
-    var file = fs.createWriteStream(exports.paths.archivedSites + '/' + url + '.html');
     var request = http.get('http://' + url, function(response) {
+      var file = fs.createWriteStream(exports.paths.archivedSites + '/' + url + '.html');
       response.pipe(file);
-      console.log(response.statusCode);
     });
-    // add it into the writeFile function
-    
   });
 };

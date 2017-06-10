@@ -94,7 +94,7 @@ exports.handleRequest = function (req, res) {
           archive.isUrlInList(link, urlInList);
           //   if !(isUrlInList())
           //     addUrlToList()
-          //       write a new page to pending archives text doc for worker to process
+          //       write a n ew page to pending archives text doc for worker to process
           //   else
           //     render loading.html
         }
