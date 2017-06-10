@@ -53,28 +53,68 @@ exports.handleRequest = function (req, res) {
     }
   } else if (req.method === 'POST') {
     statusCode = 302;
-    var link;
+    var link = '';
     req.on('data', function(chunk) {
-      chunk = chunk + '';
-      link = chunk.slice(4);
+      link += chunk + '';
     });
-    // if it exists
-      // open the archived page
-    // if it doesn't
-      // write a new page to pending archives text doc for worker to process
-      // redirect to loading.html
-    fs.open(__dirname + '/../archives/sites.txt', 'w', (err, fd) => {
-      if (err) {
-        // redirect to loading.html
-        // write to sites
-        throw err;  
-      } else {
-        // if archived already, load that page
-        fs.write(fd, link + '\n');
-        fs.close(fd);
-        res.writeHead(statusCode, postCorsHeaders);
-        res.end();
-      }
-    });    
+    req.on('end', function () {
+      link = link.slice(4);
+      
+      var urlArchived = function(result) {
+        if (result) {
+          console.log('found google.com!');
+          fs.readFile(__dirname + '/../archives/sites/' + link, 'utf-8', (err, content) => {
+            if (err) {
+              statusCode = 404;
+              res.writeHead(statusCode, defaultCorsHeaders);
+              res.end('Error 404: URL not found');
+            } else {
+              statusCode = 200;
+              res.writeHead(statusCode, defaultCorsHeaders);
+              res.end(content);
+            }
+          });
+        } else {
+          var urlInList = function(result) {
+            if (!result) {
+              archive.addUrlToList(link, function() {});
+            } 
+            fs.readFile(__dirname + '/public/loading.html', 'utf-8', (err, content) => {
+              if (err) {
+                statusCode = 404;
+                res.writeHead(statusCode, defaultCorsHeaders);
+                res.end('Error 404: URL not found');
+              } else {
+                statusCode = 200;
+                res.writeHead(statusCode, defaultCorsHeaders);
+                res.end(content);
+              }
+            });            
+          };
+          archive.isUrlInList(link, urlInList);
+          //   if !(isUrlInList())
+          //     addUrlToList()
+          //       write a new page to pending archives text doc for worker to process
+          //   else
+          //     render loading.html
+        }
+      };
+      
+      archive.isUrlArchived(link, urlArchived);
+    });
+
+    // fs.open(__dirname + '/../archives/sites.txt', 'w', (err, fd) => {
+    //   if (err) {
+    //     // redirect to loading.html
+    //     // write to sites
+    //     throw err;  
+    //   } else {
+    //     // if archived already, load that page
+    //     fs.write(fd, link + '\n');
+    //     fs.close(fd);
+    //     res.writeHead(statusCode, postCorsHeaders);
+    //     res.end();
+    //   }
+    // });    
   }
 };
