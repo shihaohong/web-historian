@@ -53,29 +53,21 @@ exports.handleRequest = function (req, res) {
     }
   } else if (req.method === 'POST') {
     statusCode = 302;
-    
-    req.on('data', function(data1) {
-      console.log(data1 + '');
-      
-      // var parsedData = JSON.parse(data1 + '');
-      // console.log(parsedData);
+    var link;
+    req.on('data', function(chunk) {
+      chunk = chunk + '';
+      link = chunk.slice(4);
     });
-    res.writeHead(statusCode, postCorsHeaders);
-    res.end();
-  }
-  // var data;
-  
-  // fs.readFile(__dirname + '/public/index.html', 'utf-8', (err, content) => {
-  //   // add error case for when readfile fails
-  //   if (err) {
-  //     console.log(err);
-  //   } else {
-  //     data = content;
-  //   }
-  // });
-  
-  // console.log(res);
-  // res.end(data);
 
-  // res.end(archive.paths.list);
+    fs.open(__dirname + '/../test/testdata/sites.txt', 'w', (err, fd) => {
+      if (err) {
+        throw err;  
+      } else {
+        fs.write(fd, link + '\n');
+        fs.close(fd);
+        res.writeHead(statusCode, postCorsHeaders);
+        res.end();
+      }
+    });    
+  }
 };
