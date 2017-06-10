@@ -37,13 +37,40 @@ exports.readListOfUrls = function(callback) {
 };
 
 exports.isUrlInList = function(url, callback) {
+  exports.readListOfUrls(existingUrls => {
+    callback(existingUrls.includes(url));
+  });
 };
 
 exports.addUrlToList = function(url, callback) {
+  exports.readListOfUrls(existingUrls => {
+    existingUrls.push(url);
+    fs.writeFile(exports.paths.list, existingUrls.join('\n'), (err, fd) => {
+      if (err) {
+        throw err;
+      } else {
+        callback(fd);
+      }
+    });
+  });
 };
 
 exports.isUrlArchived = function(url, callback) {
+  fs.readFile(exports.paths.archivedSites + '/' + url, (err) => {
+    if (err) {
+      callback(false);
+    } else {
+      callback(true);
+    }
+  });
 };
 
 exports.downloadUrls = function(urls) {
+  urls.forEach(url => {
+    fs.writeFile(exports.paths.archivedSites + '/' + url, (err) => {
+      if (err) {
+        throw err;
+      } 
+    });
+  });
 };
