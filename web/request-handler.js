@@ -39,7 +39,7 @@ exports.handleRequest = function (req, res) {
         }
       });
     } else {
-      fs.readFile(__dirname + '/../test/testdata/sites' + pathName, 'utf-8', (err, content) => {
+      fs.readFile(__dirname + '/../archives/sites' + pathName, 'utf-8', (err, content) => {
         if (err) {
           statusCode = 404;
           res.writeHead(statusCode, defaultCorsHeaders);
@@ -58,11 +58,18 @@ exports.handleRequest = function (req, res) {
       chunk = chunk + '';
       link = chunk.slice(4);
     });
-
-    fs.open(__dirname + '/../test/testdata/sites.txt', 'w', (err, fd) => {
+    // if it exists
+      // open the archived page
+    // if it doesn't
+      // write a new page to pending archives text doc for worker to process
+      // redirect to loading.html
+    fs.open(__dirname + '/../archives/sites.txt', 'w', (err, fd) => {
       if (err) {
+        // redirect to loading.html
+        // write to sites
         throw err;  
       } else {
+        // if archived already, load that page
         fs.write(fd, link + '\n');
         fs.close(fd);
         res.writeHead(statusCode, postCorsHeaders);
