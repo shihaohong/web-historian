@@ -31,7 +31,7 @@ exports.handleRequest = function (req, res) {
         if (err) {
           statusCode = 404;
           res.writeHead(statusCode, defaultCorsHeaders);
-          res.end('Error 404: URL not found');
+          res.end('here?');
         } else {
           statusCode = 200;
           res.writeHead(statusCode, defaultCorsHeaders);
@@ -39,11 +39,11 @@ exports.handleRequest = function (req, res) {
         }
       });
     } else {
-      fs.readFile(__dirname + '/../archives/sites' + pathName, 'utf-8', (err, content) => {
+      fs.readFile(__dirname + '/../archives/sites' + pathName + '.html', 'utf-8', (err, content) => {
         if (err) {
           statusCode = 404;
           res.writeHead(statusCode, defaultCorsHeaders);
-          res.end('Error 404: URL not found');
+          res.end('url not found');
         } else {
           statusCode = 200;
           res.writeHead(statusCode, defaultCorsHeaders);
@@ -63,7 +63,7 @@ exports.handleRequest = function (req, res) {
       var urlArchived = function(result) {
         if (result) {
           console.log('found google.com!');
-          fs.readFile(__dirname + '/../archives/sites/' + link, 'utf-8', (err, content) => {
+          fs.readFile(__dirname + '/../archives/sites/' + link + '.html', 'utf-8', (err, content) => {
             if (err) {
               statusCode = 404;
               res.writeHead(statusCode, defaultCorsHeaders);
