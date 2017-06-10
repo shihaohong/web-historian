@@ -11,6 +11,14 @@ var defaultCorsHeaders = {
   'access-control-max-age': 10, // Seconds.
 };
 
+var postCorsHeaders = {
+  'access-control-allow-origin': '*',
+  'access-control-allow-methods': 'GET, POST, PUT, DELETE, OPTIONS',
+  'access-control-allow-headers': 'content-type, accept',
+  'access-control-max-age': 10, // Seconds.
+  'Content-Type': 'application/json'
+};
+
 exports.handleRequest = function (req, res) {
   // use fs.readFile to read index.html
   var statusCode;
@@ -43,6 +51,17 @@ exports.handleRequest = function (req, res) {
         }
       });
     }
+  } else if (req.method === 'POST') {
+    statusCode = 302;
+    
+    req.on('data', function(data1) {
+      console.log(data1 + '');
+      
+      // var parsedData = JSON.parse(data1 + '');
+      // console.log(parsedData);
+    });
+    res.writeHead(statusCode, postCorsHeaders);
+    res.end();
   }
   // var data;
   
